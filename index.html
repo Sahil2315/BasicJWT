@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="background-color: #444444;">
+    <h2><button id="tokbtn">Click for Token</button></h2>
+    <h2><button id="accbtn">Protecc</button></h2>
+</body>
+
+<script>
+
+    let tokbtn = document.getElementById('tokbtn')
+    let accbtn = document.getElementById('accbtn')
+
+    tokbtn.addEventListener('click', async() => {
+        tokresp = await fetch('/tokenMe')
+        let newtok = await tokresp.json()
+        localStorage.setItem('jwtoken', newtok.token)
+    })
+
+    accbtn.addEventListener('click', async() => {
+        accresp = await fetch('/protected', {
+            'method': 'GET',
+            'headers': {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${localStorage.getItem('jwtoken')}`
+            }
+        })
+        let respjs = await accresp.json()
+        document.body.innerHTML += `Name: ${respjs.data.user.Name} <br> Age: ${respjs.data.user.Age} <br>`
+        document.body.innerHTML += respjs.text
+    })
+
+</script>
+
+</html>
